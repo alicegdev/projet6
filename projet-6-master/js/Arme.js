@@ -3,6 +3,5 @@ class Arme{
         this.nom = nom;
         this.visuel = visuel;
         this.degats = degats;
-        // créer une prop "position" sous forme de tableau vide ?
     }
 } 

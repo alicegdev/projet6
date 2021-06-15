@@ -1,3 +1,23 @@
+  /**
+ * Représente la carte de jeu et ses attributs.
+ * @constructor
+ * @param {number} lignes - le nombre de lignes du tableau généré.
+ * @param {number} colonnes - le nombre de colonnes généré.
+ * @param {number} nbCasesInaccessibles - le nombre de cases inaccessibles.
+ * @param {array} cellules - contient instances de la classe "Cellule".
+ * @param {array} tabJoueurs - contient instances de la classe "Joueurs" - générées dans le main.js
+ * @param {array} tabArmes - contient instances de la classe "Armes"  - générées dans le main.js
+ * @method generer - génère la carte avec le tableau HTML et le tableau des instances Cellules, affiche les encadrés joueurs
+ * @method genererCasesInaccessibles - génère des cases sur lesquelles rien ne peut être placé
+ * @method rechercheCasesDisponibles - recherche les cases qui ne sont pas déjà prises par des armes, des joueurs, des obstacles
+ * @method genererCasesArmes - place les instances de la classe Arme sur la carte
+ * @method genererCasesJoueurs - place les instances de la classe Joueur sur la carte
+ * @method findCaseToMove - trouve les cases sur lesquelles le joueur peut se déplacer
+ * @method mouvementJoueur(joueur) - déplace le joueur, prend arme/lâche arme si le cas se présente, détecte conditions combat
+ * 
+ * 
+ */
+
 class Carte {
     constructor(lignes, colonnes, nbCasesInaccessibles, tabJoueurs, tabArmes) {
         this.lignes = lignes;
@@ -8,6 +28,7 @@ class Carte {
         this.tabArmes = tabArmes;
     }
 
+  
     generer() {
         let banner = document.getElementById("banner");
         banner.style.display = "none";
@@ -87,7 +108,6 @@ class Carte {
             randomCellule.disponible = false;
             let $randomCell = document.getElementById(randomCellule.id);
             $randomCell.style.backgroundImage = "url(" + arme.visuel + ")";
-            positionsArmes.push("cellule" + randomCellule.x + randomCellule.y);
             this.cellules.forEach(cellule => {
                 if(cellule.id === randomCellule.id){
                     cellule.contientArme = arme;
