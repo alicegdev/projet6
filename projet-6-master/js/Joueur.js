@@ -12,16 +12,10 @@
  * @param {object} tmp - contient l'arme détenue par le joueur avant d'en changer
  * @param {boolean} actif - "true" si c'est au tour du joueur en question
  * @param {boolean} choixDefense - "true" si le joueur a fait le choix de se défendre
- * @method afficheInfos - affiche les détails du joueur dans son encadré + le bouton déplacement
- * @method boutonsCombat - affiche les boutons du combat au tour par tour dans l'encadré
- * @method attaquer - attaque l'adversaire et réalise les dégâts définis par l'arme
- * @method seDefendre - passe choixDefense à true
- * @method gameOver - animation de fin de combat
-
  */
 
 class Joueur {
-    constructor(nom, arme, sante, visuel) {
+    constructor(nom, visuel, arme = mitraillette, sante = 100) {
         this.nom = nom;
         this.arme = arme;
         this.sante = sante;
@@ -34,15 +28,26 @@ class Joueur {
         this.actif = false;
         this.choixDefense = false;
     }
-
+    /**
+     * Affiche les informations du joueur
+     * @return{string} une concaténation variables/chaîne de caractères : nom, nom de l'arme, santé
+     */
     get informations() {
-        return `<br />Nom : ${this.nom}` + `<br /><br />Arme : ${this.arme.nom}` + `<br /><br />Sante : ${this.sante} <br />`;
+        return `<br />Nom : ${this.nom} <br /><br />Arme : ${this.arme.nom} <br /><br />Sante : ${this.sante} <br />`;
     }
+
+    /**
+     * Affiche les dégâts de l'arme du joueur
+     * @return{number} les dégâts de l'arme portée par le joueur
+     */
 
     get power() {
         return this.arme.degats;
     }
 
+    /**
+     * Affiche les détails du joueur et le bouton déplacement dans son encadré
+     */
     afficheInfos() {
         this.coteJoueur.innerHTML = "";
         let coteInfos = document.createElement("div");
@@ -57,6 +62,11 @@ class Joueur {
             carteUne.mouvementJoueur(this);
         })
     }
+
+    /**
+     * Affiche les boutons du combat au tour par tour dans l'encadré de chaque joueur
+     * @param{object} adversaire - le joueur adverse
+     */
 
     boutonsCombat(adversaire) {
         if (this.actif === true) {
@@ -78,6 +88,11 @@ class Joueur {
 
     }
 
+    /**
+     * attaque l'adversaire et réalise les dégâts définis par l'arme
+     * @param{object} adversaire - le joueur adverse
+     */
+
     attaquer(adversaire) {
         this.choixDefense = false;
         if (adversaire.choixDefense === true) {
@@ -94,6 +109,10 @@ class Joueur {
         adversaire.actif = true;
         adversaire.boutonsCombat(this);
     }
+    /**
+     * passe choixDefense à true
+     * @param{object} adversaire - le joueur adverse
+     */
 
     seDefendre(adversaire) {
         this.choixDefense = true;
@@ -103,6 +122,11 @@ class Joueur {
         adversaire.boutonsCombat(this);
 
     }
+    /**
+     * animation de fin de combat
+     * @param{object} adversaire - le joueur adverse
+     */
+
     gameOver(adversaire) {
         let gameOver = document.getElementById("game_over");
         document.getElementById("game").style.display = "none";
