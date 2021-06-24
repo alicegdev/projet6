@@ -144,11 +144,11 @@
       }
       /**
        * trouve les cases sur lesquelles le joueur peut se déplacer
-       * @param{string} axis - l'axe horizontal ou vertical
+       * @param{string} axe - l'axe horizontal ou vertical
        * @param{object} joueur - le joueur qui doit trouver sa prochaine case
        * @param{direction} direction - possibilité d'aller en arrière ou en avant
        */
-      findCaseToMove(axis, joueur, direction = 1) {
+      caseSuivante(axe, joueur, direction = 1) {
 
           let xPlayer = joueur.posX;
           let yPlayer = joueur.posY;
@@ -157,8 +157,8 @@
           let tabCaseOk = [];
 
           for (let i of tabIndex) {
-              let x = (axis === "x") ? xPlayer - i : xPlayer;
-              let y = (axis === "y") ? yPlayer - i : yPlayer;
+              let x = (axe === "x") ? xPlayer - i : xPlayer;
+              let y = (axe === "y") ? yPlayer - i : yPlayer;
 
               if ((x < this.colonnes) && (x >= 0) && (y < this.lignes) && (y >= 0)) {
                   let caseOk = this.cellules.find((cellule) => {
@@ -182,21 +182,21 @@
        */
       mouvementJoueur(joueur) {
           joueur.actif = true;
-          let allCaseOk = [].concat(
-              this.findCaseToMove("x", joueur),
-              this.findCaseToMove("x", joueur, -1),
-              this.findCaseToMove("y", joueur),
-              this.findCaseToMove("y", joueur, -1)
+          let casesPossibles = [].concat(
+              this.caseSuivante("x", joueur),
+              this.caseSuivante("x", joueur, -1),
+              this.caseSuivante("y", joueur),
+              this.caseSuivante("y", joueur, -1)
           );
           alert("Cliquez sur l'une des cases en surbrillance pour continuer");
 
-          allCaseOk.forEach(cellule => {
+          casesPossibles.forEach(cellule => {
 
               let celluleCliquable = document.getElementById(cellule.id);
               celluleCliquable.style.backgroundColor = "#CC5285";
               celluleCliquable.addEventListener('click', () => {
                   let idCelluleCliquee = cellule.id;
-                  allCaseOk.forEach(cellule => {
+                  casesPossibles.forEach(cellule => {
                       document.getElementById(cellule.id).style.backgroundColor = "#4C2E4D";
                   });
                   document.getElementById(idCelluleCliquee).style.backgroundImage = "url(" + joueur.visuel + ")";
