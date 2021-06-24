@@ -5,8 +5,8 @@
  * @param {object} arme - l'arme par défaut ou prise par le joueur
  * @param {number} sante - les points de vie du joueur
  * @param {img} visuel - l'image utilisée comme avatar du joueur
- * @param {element} coteJoueur - tout l'encadré qui montre les stats du joueur et contient les boutons
- * @param {element} coteInfos - uniquement le container des informations du joueur
+ * @param {element} coteJoueur - tout l'encadré qui montre les infos du joueur et contient les boutons
+ * @param {element} coteInfos - uniquement les infos du joueur
  * @param {number} posX - la position en x de la case sur laquelle est le joueur
  * @param {number} posY- la position en y de la case sur laquelle est le joueur
  * @param {object} tmp - contient l'arme détenue par le joueur avant d'en changer
@@ -64,7 +64,7 @@ class Joueur {
     }
 
     /**
-     * Affiche les boutons du combat au tour par tour dans l'encadré de chaque joueur
+     * Affiche les boutons du combat dans l'encadré de chaque joueur
      * @param{object} adversaire - le joueur adverse
      */
 
