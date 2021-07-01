@@ -63,6 +63,23 @@ class Joueur {
         })
     }
 
+    tourSuivant(){
+        let btnTourSuivant = document.createElement("button");
+        btnTourSuivant.className += "game_btn";
+        this.coteJoueur.appendChild(btnTourSuivant);
+        btnTourSuivant.innerHTML ="Tour suivant";
+        btnTourSuivant.addEventListener("click", () => {
+            this.actif = false;
+            if(this === joueurUn){
+                joueurDeux.actif = true;
+                mouvementJoueur(joueurDeux);
+            }else if(this === joueurDeux){
+                joueurUn.actif = true;
+                mouvementJoueur(joueurUn);
+            }
+        })
+    }
+
     /**
      * Affiche les boutons du combat dans l'encadré de chaque joueur
      * @param{object} adversaire - le joueur adverse

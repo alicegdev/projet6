@@ -160,7 +160,7 @@
               let x = (axe === "x") ? xPlayer - i : xPlayer;
               let y = (axe === "y") ? yPlayer - i : yPlayer;
 
-              if ((x < this.colonnes) && (x >= 0) && (y < this.lignes) && (y >= 0)) {
+              if ((y < this.colonnes) && (y >= 0) && (x < this.lignes) && (x >= 0)) {
                   let caseOk = this.cellules.find((cellule) => {
                       return (cellule.x == x) && (cellule.y == y) && (cellule.accessible === true);
                   });
@@ -212,7 +212,7 @@
                       joueur.posY = cellule.y;
 
 
-
+                      
                       if (joueur === joueurUn) {
                           if (((joueur.posX === joueurDeux.posX) && (joueur.posY === (joueurDeux.posY - 1))) ||
                               ((joueur.posX === joueurDeux.posX) && (joueur.posY === (joueurDeux.posY + 1))) ||
