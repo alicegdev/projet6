@@ -75,14 +75,14 @@ class Joueur {
     }
 
     tourSuivant(adversaire) {
+        let btnTourSuivant = document.createElement("button");
         if (this.actif === true || this.stopped === true) {
-            let btnTourSuivant = document.createElement("button");
             btnTourSuivant.className += "game_btn";
             btnTourSuivant.innerHTML = "Tour suivant";
             this.coteJoueur.appendChild(btnTourSuivant);
             this.btnTourSuivant = btnTourSuivant;
         }
-        this.btnTourSuivant.addEventListener("click", () => {
+        btnTourSuivant.addEventListener("click", () => {
             this.actif = false;
             adversaire.actif = true;
             adversaire.stopped = false;

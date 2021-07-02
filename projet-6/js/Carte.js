@@ -217,74 +217,42 @@
               celluleFinTour = this.cellules.find((cellule) => {
                   return (cellule.x === (celluleDebutTour.x) + 1) && (cellule.y === joueur.posY);
               });
-              if (casesPossibles.includes(celluleFinTour) === false || joueur.stopped === true) {
-                  celluleFinTour = this.cellules.find((cellule) => {
-                      return (cellule.x === joueur.posX) && (cellule.y === joueur.posY);
-                  });
-                  joueur.stopped = true;
-                  alert("Impossible d'aller plus loin");
-                  document.removeEventListener("keydown", (e) => {
-                    carteUne.gestionEvenementsClavier(casesPossibles, joueur, e);
-                  });
-                  //joueur.afficheInfos();
-              }
+              this.checkIfPlayerIsStopped(casesPossibles, celluleFinTour, joueur);
 
           } else if (e.key == "Left" || e.key == "ArrowLeft") {
               celluleFinTour = this.cellules.find((cellule) => {
                   return (cellule.x === (celluleDebutTour.x) - 1) && (cellule.y === joueur.posY);
               });
-
-              if (casesPossibles.includes(celluleFinTour) === false || joueur.stopped === true) {
-                  celluleFinTour = this.cellules.find((cellule) => {
-                      return (cellule.x === joueur.posX) && (cellule.y === joueur.posY);
-                  });
-                  joueur.stopped = true;
-                  alert("Impossible d'aller plus loin");
-                  document.removeEventListener("keydown", (e) => {
-                    carteUne.gestionEvenementsClavier(casesPossibles, joueur, e);
-                  });
-                  //joueur.afficheInfos();
-              }
+              this.checkIfPlayerIsStopped(casesPossibles, celluleFinTour, joueur);
 
           } else if (e.key == "Down" || e.key == "ArrowDown") {
               celluleFinTour = this.cellules.find((cellule) => {
                   return (cellule.x === joueur.posX) && (cellule.y === (celluleDebutTour.y) + 1);
               });
-
-              if (casesPossibles.includes(celluleFinTour) === false || joueur.stopped === true) {
-                  celluleFinTour = this.cellules.find((cellule) => {
-                      return (cellule.x === (joueur.posX)) && (cellule.y === joueur.posY);
-                  });
-                  joueur.stopped = true;
-                  alert("Impossible d'aller plus loin");
-                  document.removeEventListener("keydown", (e) => {
-                    carteUne.gestionEvenementsClavier(casesPossibles, joueur, e);
-                  });
-                  //joueur.afficheInfos();
-              }
+              this.checkIfPlayerIsStopped(casesPossibles, celluleFinTour, joueur);
 
           } else if (e.key == "Up" || e.key == "ArrowUp") {
               celluleFinTour = this.cellules.find((cellule) => {
                   return (cellule.x === joueur.posX) && (cellule.y === (celluleDebutTour.y) - 1);
               });
-              if (casesPossibles.includes(celluleFinTour) === false || joueur.stopped === true) {
-                  celluleFinTour = this.cellules.find((cellule) => {
-                      return (cellule.x === joueur.posX) && (cellule.y === joueur.posY); 
-                  });
-                  joueur.stopped = true;
-                  alert("Impossible d'aller plus loin");
-                  document.removeEventListener("keydown", (e) => {
-                    carteUne.gestionEvenementsClavier(casesPossibles, joueur, e);
-                  });
-                  //joueur.afficheInfos();
-              }
-
-          }
-          joueur.afficheInfos();
-          this.nouvellePosJoueur(casesPossibles, celluleFinTour, joueur);
-    
-      }
-
+              this.checkIfPlayerIsStopped(casesPossibles, celluleFinTour, joueur);
+          }    
+      } 
+      
+      checkIfPlayerIsStopped(casesPossibles, celluleFinTour, joueur){
+      if (casesPossibles.includes(celluleFinTour) === false || joueur.stopped === true) {
+        celluleFinTour = this.cellules.find((cellule) => {
+            return (cellule.x === joueur.posX) && (cellule.y === joueur.posY);
+        });
+        joueur.stopped = true;
+        alert("Impossible d'aller plus loin");
+        document.removeEventListener("keydown", (e) => {
+          carteUne.gestionEvenementsClavier(casesPossibles, joueur, e);
+        });
+        }
+        joueur.afficheInfos();
+        this.nouvellePosJoueur(casesPossibles, celluleFinTour, joueur);
+    }
       nouvellePosJoueur(casesPossibles, celluleFinTour, joueur) {
           
           if (joueur.actif === true) {
@@ -298,6 +266,7 @@
               }
               joueur.posX = celluleFinTour.x;
               joueur.posY = celluleFinTour.y;
+              joueur.stopped = false;
               joueur.moving = false;
               if (joueur.tmp !== null) {
                   document.getElementById(joueur.tmp.idCase).style.backgroundImage = "url(" + joueur.tmp.arme.visuel + ")";

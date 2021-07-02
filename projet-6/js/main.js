@@ -21,6 +21,7 @@ let carteUne = new Carte(4, 6, 3, tabJoueurs, tabArmes);
 let btnGenerer = document.getElementById("btn_generer");
     
 /**  gestionnaire d'événement : au clic, la carte se génère */
+// à passer dans une classe 
 btnGenerer.addEventListener("click", () => {
     carteUne.generer();
 });
