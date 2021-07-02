@@ -11,6 +11,7 @@
  * @param {number} posY- la position en y de la case sur laquelle est le joueur
  * @param {object} tmp - contient l'arme détenue par le joueur avant d'en changer
  * @param {boolean} actif - "true" si c'est au tour du joueur en question
+ * @param {boolean} stopped -
  * @param {boolean} choixDefense - "true" si le joueur a fait le choix de se défendre
  */
 
@@ -30,6 +31,8 @@ class Joueur {
         this.celluleFinTour = 0;
         this.tmp = null;
         this.actif = false;
+        this.stopped = false;
+        this.moving = false;
         this.choixDefense = false;
     }
     /**
@@ -58,29 +61,31 @@ class Joueur {
         this.coteInfos = coteInfos;
         this.coteInfos.innerHTML = this.informations;
         this.coteJoueur.appendChild(this.coteInfos);
-        if(this.actif === true){
-        let btnDeplacement = document.createElement("button");
-        btnDeplacement.className += "game_btn";
-        btnDeplacement.innerHTML = "Déplacement";
-        this.coteJoueur.appendChild(btnDeplacement);
-        this.btnDeplacement = btnDeplacement;
-        this.btnDeplacement.addEventListener("click", () => {
-            carteUne.mouvementJoueur(this);
-        });
-    }
+        if (this.actif === true && this.stopped === false && this.moving === false) {
+            let btnDeplacement = document.createElement("button");
+            btnDeplacement.className += "game_btn";
+            btnDeplacement.innerHTML = "Déplacement";
+            this.coteJoueur.appendChild(btnDeplacement);
+            this.btnDeplacement = btnDeplacement;
+            this.btnDeplacement.addEventListener("click", () => {
+                carteUne.mouvementJoueur(this);
+            });
+            
+        }
     }
 
     tourSuivant(adversaire) {
-        if(this.actif === true){
-        let btnTourSuivant = document.createElement("button");
-        btnTourSuivant.className += "game_btn";
-        btnTourSuivant.innerHTML = "Tour suivant";
-        this.coteJoueur.appendChild(btnTourSuivant);
-        this.btnTourSuivant = btnTourSuivant;
+        if (this.actif === true || this.stopped === true) {
+            let btnTourSuivant = document.createElement("button");
+            btnTourSuivant.className += "game_btn";
+            btnTourSuivant.innerHTML = "Tour suivant";
+            this.coteJoueur.appendChild(btnTourSuivant);
+            this.btnTourSuivant = btnTourSuivant;
         }
         this.btnTourSuivant.addEventListener("click", () => {
             this.actif = false;
             adversaire.actif = true;
+            adversaire.stopped = false;
             this.afficheInfos();
             adversaire.afficheInfos();
         });
@@ -92,6 +97,11 @@ class Joueur {
      */
 
     boutonsCombat(adversaire) {
+        this.stopped = true;
+        adversaire.stopped = true;
+        this.afficheInfos();
+        adversaire.afficheInfos();
+
         if (this.actif === true) {
             let btnAttaquer = document.createElement("button");
             btnAttaquer.className += "game_btn";

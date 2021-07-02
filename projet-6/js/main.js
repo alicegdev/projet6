@@ -19,7 +19,7 @@ let carteUne = new Carte(4, 6, 3, tabJoueurs, tabArmes);
 
 /** récupération du bouton HTML et transformation en variable JS */
 let btnGenerer = document.getElementById("btn_generer");
-
+    
 /**  gestionnaire d'événement : au clic, la carte se génère */
 btnGenerer.addEventListener("click", () => {
     carteUne.generer();

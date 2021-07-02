@@ -199,12 +199,14 @@
           });
           alert("Déplacez-vous au clavier sur l'une des cases en surbrillance pour continuer");
 
-          document.addEventListener("keydown", function keyDownHandler(e) {
-              carteUne.gestionEvenementsClavier(casesPossibles, joueur, e);
+          document.addEventListener("keydown", (e) => {
+            carteUne.gestionEvenementsClavier(casesPossibles, joueur, e);
           });
       }
 
       gestionEvenementsClavier(casesPossibles, joueur, e) {
+
+          joueur.moving = true;
           let celluleDebutTour = this.cellules.find((cellule) => {
               return (cellule.x === joueur.posX) && (cellule.y === joueur.posY);
           });
@@ -215,11 +217,16 @@
               celluleFinTour = this.cellules.find((cellule) => {
                   return (cellule.x === (celluleDebutTour.x) + 1) && (cellule.y === joueur.posY);
               });
-              if (casesPossibles.includes(celluleFinTour) === false) {
+              if (casesPossibles.includes(celluleFinTour) === false || joueur.stopped === true) {
                   celluleFinTour = this.cellules.find((cellule) => {
                       return (cellule.x === joueur.posX) && (cellule.y === joueur.posY);
                   });
+                  joueur.stopped = true;
                   alert("Impossible d'aller plus loin");
+                  document.removeEventListener("keydown", (e) => {
+                    carteUne.gestionEvenementsClavier(casesPossibles, joueur, e);
+                  });
+                  //joueur.afficheInfos();
               }
 
           } else if (e.key == "Left" || e.key == "ArrowLeft") {
@@ -227,11 +234,16 @@
                   return (cellule.x === (celluleDebutTour.x) - 1) && (cellule.y === joueur.posY);
               });
 
-              if (casesPossibles.includes(celluleFinTour) === false) {
+              if (casesPossibles.includes(celluleFinTour) === false || joueur.stopped === true) {
                   celluleFinTour = this.cellules.find((cellule) => {
                       return (cellule.x === joueur.posX) && (cellule.y === joueur.posY);
                   });
+                  joueur.stopped = true;
                   alert("Impossible d'aller plus loin");
+                  document.removeEventListener("keydown", (e) => {
+                    carteUne.gestionEvenementsClavier(casesPossibles, joueur, e);
+                  });
+                  //joueur.afficheInfos();
               }
 
           } else if (e.key == "Down" || e.key == "ArrowDown") {
@@ -239,26 +251,38 @@
                   return (cellule.x === joueur.posX) && (cellule.y === (celluleDebutTour.y) + 1);
               });
 
-              if (casesPossibles.includes(celluleFinTour) === false) {
+              if (casesPossibles.includes(celluleFinTour) === false || joueur.stopped === true) {
                   celluleFinTour = this.cellules.find((cellule) => {
                       return (cellule.x === (joueur.posX)) && (cellule.y === joueur.posY);
                   });
+                  joueur.stopped = true;
                   alert("Impossible d'aller plus loin");
+                  document.removeEventListener("keydown", (e) => {
+                    carteUne.gestionEvenementsClavier(casesPossibles, joueur, e);
+                  });
+                  //joueur.afficheInfos();
               }
 
           } else if (e.key == "Up" || e.key == "ArrowUp") {
               celluleFinTour = this.cellules.find((cellule) => {
                   return (cellule.x === joueur.posX) && (cellule.y === (celluleDebutTour.y) - 1);
               });
-              if (casesPossibles.includes(celluleFinTour) === false) {
+              if (casesPossibles.includes(celluleFinTour) === false || joueur.stopped === true) {
                   celluleFinTour = this.cellules.find((cellule) => {
                       return (cellule.x === joueur.posX) && (cellule.y === joueur.posY); 
                   });
+                  joueur.stopped = true;
                   alert("Impossible d'aller plus loin");
+                  document.removeEventListener("keydown", (e) => {
+                    carteUne.gestionEvenementsClavier(casesPossibles, joueur, e);
+                  });
+                  //joueur.afficheInfos();
               }
 
           }
-          carteUne.nouvellePosJoueur(casesPossibles, celluleFinTour, joueur);
+          joueur.afficheInfos();
+          this.nouvellePosJoueur(casesPossibles, celluleFinTour, joueur);
+    
       }
 
       nouvellePosJoueur(casesPossibles, celluleFinTour, joueur) {
@@ -269,9 +293,12 @@
               });
               let idCelluleFinTour = celluleFinTour.id;
               document.getElementById(idCelluleFinTour).style.backgroundImage = "url(" + joueur.visuel + ")";
+              if(joueur.stopped === false){
               document.getElementById("cellule" + joueur.posX + joueur.posY).style.backgroundImage = "none";
+              }
               joueur.posX = celluleFinTour.x;
               joueur.posY = celluleFinTour.y;
+              joueur.moving = false;
               if (joueur.tmp !== null) {
                   document.getElementById(joueur.tmp.idCase).style.backgroundImage = "url(" + joueur.tmp.arme.visuel + ")";
                   joueur.tmp = null;
