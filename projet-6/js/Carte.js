@@ -37,13 +37,14 @@
           espaceJoueurs.setAttribute('id', 'espaceJoueurs');
           let tblBody = document.createElement("tbody");
 
-          for (let i = 0; i < this.colonnes; i++) {
+          for (let i = 0; i < this.lignes; i++) {
               let colonne = document.createElement("tr");
-              for (let j = 0; j < this.lignes; j++) {
+              for (let j = 0; j < this.colonnes; j++) {
                   let cellule = document.createElement("td");
-                  cellule.id += "cellule" + i + j;
+                  cellule.id += "cellule" + j + i;
 
-                  this.cellules.push(new Cellule(('cellule' + i + j), i, j, true));
+                  this.cellules.push(new Cellule(('cellule' + j + i), j, i, true));
+                  console.log(this.cellules);
                   colonne.appendChild(cellule);
               }
               tblBody.appendChild(colonne);
@@ -51,6 +52,7 @@
           tbl.appendChild(tblBody);
           game.appendChild(tbl);
           tbl.setAttribute("border", "2");
+          joueurUn.actif = true;
           this.tabJoueurs.forEach(joueur => {
               joueur.afficheInfos();
           });
@@ -140,7 +142,6 @@
               randomCellule.disponible = false;
               k++;
           } while (k < this.tabJoueurs.length);
-
       }
       /**
        * trouve les cases sur lesquelles le joueur peut se déplacer
@@ -160,7 +161,7 @@
               let x = (axe === "x") ? xPlayer - i : xPlayer;
               let y = (axe === "y") ? yPlayer - i : yPlayer;
 
-              if ((y < this.colonnes) && (y >= 0) && (x < this.lignes) && (x >= 0)) {
+              if ((x < this.colonnes) && (x >= 0) && (y < this.lignes) && (y >= 0)) {
                   let caseOk = this.cellules.find((cellule) => {
                       return (cellule.x == x) && (cellule.y == y) && (cellule.accessible === true);
                   });
@@ -173,7 +174,7 @@
               }
           }
 
-
+          
           return tabCaseOk;
       }
       /**
@@ -181,82 +182,186 @@
        * @param{object} joueur - le joueur qui se déplace
        */
       mouvementJoueur(joueur) {
-          joueur.actif = true;
+        if(joueur === joueurUn){
+            joueurUn.actif = true;
+            console.log(" Position Edea : cellule " + joueurUn.posX + joueurUn.posY);
+        }else{
+            joueurDeux.actif = true;
+            console.log("Position Grounch : cellule " + joueurUn.posX + joueurUn.posY);
+        }
+
           let casesPossibles = [].concat(
               this.caseSuivante("x", joueur),
               this.caseSuivante("x", joueur, -1),
               this.caseSuivante("y", joueur),
               this.caseSuivante("y", joueur, -1)
           );
-          alert("Cliquez sur l'une des cases en surbrillance pour continuer");
 
           casesPossibles.forEach(cellule => {
+              document.getElementById(cellule.id).style.backgroundColor = "#CC5285";
+          });
+          alert("Déplacez-vous au clavier sur l'une des cases en surbrillance pour continuer");
 
-              let celluleCliquable = document.getElementById(cellule.id);
-              celluleCliquable.style.backgroundColor = "#CC5285";
-              celluleCliquable.addEventListener('click', () => {
-                  let idCelluleCliquee = cellule.id;
-                  casesPossibles.forEach(cellule => {
-                      document.getElementById(cellule.id).style.backgroundColor = "#4C2E4D";
-                  });
-                  document.getElementById(idCelluleCliquee).style.backgroundImage = "url(" + joueur.visuel + ")";
+          document.addEventListener("keydown", function keyDownHandler(e) {
+              carteUne.gestionEvenementsClavier(casesPossibles, joueur, e);
+          });
+      }
 
-                  if (joueur.actif === true) {
-                      document.getElementById("cellule" + joueur.posX + joueur.posY).style.backgroundImage = "none";
+      gestionEvenementsClavier(casesPossibles, joueur, e) {
+          let rightPressed = false;
+          let leftPressed = false;
+          let downPressed = false;
+          let upPressed = false;
 
-                      if (joueur.tmp !== null) {
-                          document.getElementById(joueur.tmp.idCase).style.backgroundImage = "url(" + joueur.tmp.arme.visuel + ")";
-                          joueur.tmp = null;
-                      }
-                      joueur.posX = cellule.x;
-                      joueur.posY = cellule.y;
-
-
-                      
-                      if (joueur === joueurUn) {
-                          if (((joueur.posX === joueurDeux.posX) && (joueur.posY === (joueurDeux.posY - 1))) ||
-                              ((joueur.posX === joueurDeux.posX) && (joueur.posY === (joueurDeux.posY + 1))) ||
-                              ((joueur.posX === joueurDeux.posX - 1) && (joueur.posY === (joueurDeux.posY))) ||
-                              ((joueur.posX === joueurDeux.posX + 1) && (joueur.posY === (joueurDeux.posY)))) {
-                              alert("Combat lancé");
-
-                              joueurUn.boutonsCombat(joueurDeux);
-                          }
-                      } else if (joueur === joueurDeux) {
-                          if (((joueur.posX === joueurUn.posX) && (joueur.posY === (joueurUn.posY - 1))) ||
-                              ((joueur.posX === joueurUn.posX) && (joueur.posY === (joueurUn.posY + 1))) ||
-                              ((joueur.posX === joueurUn.posX - 1) && (joueur.posY === (joueurUn.posY))) ||
-                              ((joueur.posX === joueurUn.posX + 1) && (joueur.posY === (joueurUn.posY)))) {
-                              alert("Combat lancé");
-                              joueurDeux.boutonsCombat(joueurUn);
-
-
-                          }
-                      }
-
-
-
-                      this.cellules.forEach(cellule => {
-                          if (cellule.id === idCelluleCliquee) {
-                              if (cellule.contientArme !== null) {
-                                  let tampon = {
-                                      arme: joueur.arme,
-                                      idCase: idCelluleCliquee
-                                  }
-                                  joueur.tmp = tampon;
-                                  joueur.arme = cellule.contientArme;
-                                  joueur.coteInfos.innerHTML = joueur.informations;
-                                  cellule.contientArme = tampon.arme;
-
-                              }
-                          }
-
-                      });
-                  }
-                  joueur.actif = false;
-              });
-
+          let celluleDebutTour = this.cellules.find((cellule) => {
+              return (cellule.x === joueur.posX) && (cellule.y === joueur.posY);
           });
 
+          let celluleFinTour;
+
+          if (e.key == "Right" || e.key == "ArrowRight") {
+              rightPressed = true;
+              celluleFinTour = this.cellules.find((cellule) => {
+                  return (cellule.x === (celluleDebutTour.x) + 1) && (cellule.y === joueur.posY);
+              });
+              if (casesPossibles.includes(celluleFinTour) === false) {
+                  celluleFinTour = this.cellules.find((cellule) => {
+                      return (cellule.x === joueur.posX) && (cellule.y === joueur.posY);
+                  });
+                  alert("Impossible d'aller plus loin");
+              }
+              carteUne.nouvellePosJoueur(casesPossibles, celluleFinTour, joueur);
+
+
+          } else if (e.key == "Left" || e.key == "ArrowLeft") {
+              leftPressed = true;
+              celluleFinTour = this.cellules.find((cellule) => {
+                  return (cellule.x === (celluleDebutTour.x) - 1) && (cellule.y === joueur.posY);
+              });
+
+              if (casesPossibles.includes(celluleFinTour) === false) {
+                  celluleFinTour = this.cellules.find((cellule) => {
+                      return (cellule.x === joueur.posX) && (cellule.y === joueur.posY);
+                  });
+                  alert("Impossible d'aller plus loin");
+              }
+              carteUne.nouvellePosJoueur(casesPossibles, celluleFinTour, joueur);
+
+
+
+          } else if (e.key == "Down" || e.key == "ArrowDown") {
+              downPressed = true;
+              celluleFinTour = this.cellules.find((cellule) => {
+                  return (cellule.x === joueur.posX) && (cellule.y === (celluleDebutTour.y) + 1);
+              });
+
+              if (casesPossibles.includes(celluleFinTour) === false) {
+                  celluleFinTour = this.cellules.find((cellule) => {
+                      return (cellule.x === (joueur.posX)) && (cellule.y === joueur.posY);
+                  });
+                  alert("Impossible d'aller plus loin");
+              }
+              carteUne.nouvellePosJoueur(casesPossibles, celluleFinTour, joueur);
+
+          } else if (e.key == "Up" || e.key == "ArrowUp") {
+              upPressed = true;
+              celluleFinTour = this.cellules.find((cellule) => {
+                  return (cellule.x === joueur.posX) && (cellule.y === (celluleDebutTour.y) - 1);
+              });
+              if (casesPossibles.includes(celluleFinTour) === false) {
+                  console.log(casesPossibles);
+                  celluleFinTour = this.cellules.find((cellule) => {
+                      return (cellule.x === joueur.posX) && (cellule.y === joueur.posY); 
+                  });
+                  alert("Impossible d'aller plus loin");
+                  // gérer l'affichage du joueur dans ce cas-là
+              }
+              carteUne.nouvellePosJoueur(casesPossibles, celluleFinTour, joueur);
+
+          }
+
+
+          document.addEventListener("keyup", function keyUpHandler(e) {
+              if (e.key == "Right" || e.key == "ArrowRight") {
+                  rightPressed = false;
+              }
+              if (e.key == "Left" || e.key == "ArrowLeft") {
+                  leftPressed = false;
+              }
+              if (e.key == "Down" || e.key == "ArrowDown") {
+                  downPressed = false;
+              } else if (e.key == "Up" || e.key == "ArrowUp") {
+                  upPressed = false;
+              }
+          });
+      }
+      nouvellePosJoueur(casesPossibles, celluleFinTour, joueur) {
+          
+          if (joueur.actif === true) {
+              casesPossibles.forEach(cellule => {
+                  document.getElementById(cellule.id).style.backgroundColor = "#4C2E4D";
+              });
+              let idCelluleFinTour = celluleFinTour.id;
+              document.getElementById(idCelluleFinTour).style.backgroundImage = "url(" + joueur.visuel + ")";
+              document.getElementById("cellule" + joueur.posX + joueur.posY).style.backgroundImage = "none";
+              joueur.posX = celluleFinTour.x;
+              joueur.posY = celluleFinTour.y;
+              if (joueur.tmp !== null) {
+                  document.getElementById(joueur.tmp.idCase).style.backgroundImage = "url(" + joueur.tmp.arme.visuel + ")";
+                  joueur.tmp = null;
+              }
+              this.detectionChangementDArme(celluleFinTour, joueur);
+              this.detectionCombat(joueur);
+              if(joueur === joueurUn){
+                  joueurUn.tourSuivant(joueurDeux);
+              }else{
+                  joueurDeux.tourSuivant(joueurUn);
+
+              }
+          }
+        
+      }
+
+      detectionChangementDArme(celluleFinTour, joueur) {
+          this.cellules.forEach(cellule => {
+              if (cellule.id === celluleFinTour.id) {
+                  if (cellule.contientArme !== null) {
+                      let tampon = {
+                          arme: joueur.arme,
+                          idCase: celluleFinTour.id
+                      }
+                      joueur.tmp = tampon;
+                      joueur.arme = cellule.contientArme;
+                      joueur.coteInfos.innerHTML = joueur.informations;
+                      cellule.contientArme = tampon.arme;
+
+                  }
+              }
+
+          });
+      }
+
+      detectionCombat(joueur) {
+          
+          if (joueur === joueurUn) {
+              if (((joueur.posX === joueurDeux.posX) && (joueur.posY === (joueurDeux.posY - 1))) ||
+                  ((joueur.posX === joueurDeux.posX) && (joueur.posY === (joueurDeux.posY + 1))) ||
+                  ((joueur.posX === joueurDeux.posX - 1) && (joueur.posY === (joueurDeux.posY))) ||
+                  ((joueur.posX === joueurDeux.posX + 1) && (joueur.posY === (joueurDeux.posY)))) {
+                  alert("Combat lancé");
+
+                  joueurUn.boutonsCombat(joueurDeux);
+              }
+          } else if (joueur === joueurDeux) {
+              if (((joueur.posX === joueurUn.posX) && (joueur.posY === (joueurUn.posY - 1))) ||
+                  ((joueur.posX === joueurUn.posX) && (joueur.posY === (joueurUn.posY + 1))) ||
+                  ((joueur.posX === joueurUn.posX - 1) && (joueur.posY === (joueurUn.posY))) ||
+                  ((joueur.posX === joueurUn.posX + 1) && (joueur.posY === (joueurUn.posY)))) {
+                  alert("Combat lancé");
+                  joueurDeux.boutonsCombat(joueurUn);
+
+
+              }
+          }
       }
   }

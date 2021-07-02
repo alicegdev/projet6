@@ -22,8 +22,12 @@ class Joueur {
         this.visuel = visuel;
         this.coteJoueur = 0;
         this.coteInfos = 0;
+        this.btnDeplacement = 0;
+        this.btnTourSuivant = 0;
         this.posX = 0;
         this.posY = 0;
+        this.celluleDebutTour = 0;
+        this.celluleFinTour = 0;
         this.tmp = null;
         this.actif = false;
         this.choixDefense = false;
@@ -54,30 +58,37 @@ class Joueur {
         this.coteInfos = coteInfos;
         this.coteInfos.innerHTML = this.informations;
         this.coteJoueur.appendChild(this.coteInfos);
+        if(this.actif === true){
         let btnDeplacement = document.createElement("button");
         btnDeplacement.className += "game_btn";
-        this.coteJoueur.appendChild(btnDeplacement);
         btnDeplacement.innerHTML = "Déplacement";
-        btnDeplacement.addEventListener("click", () => {
+        this.coteJoueur.appendChild(btnDeplacement);
+        this.btnDeplacement = btnDeplacement;
+        this.btnDeplacement.addEventListener("click", () => {
             carteUne.mouvementJoueur(this);
-        })
+        });
+    }
     }
 
-    tourSuivant(){
+    tourSuivant(adversaire) {
+        if(this.actif === true){
         let btnTourSuivant = document.createElement("button");
         btnTourSuivant.className += "game_btn";
+        btnTourSuivant.innerHTML = "Tour suivant";
         this.coteJoueur.appendChild(btnTourSuivant);
-        btnTourSuivant.innerHTML ="Tour suivant";
-        btnTourSuivant.addEventListener("click", () => {
+        this.btnTourSuivant = btnTourSuivant;
+        }
+        this.btnTourSuivant.addEventListener("click", () => {
             this.actif = false;
-            if(this === joueurUn){
-                joueurDeux.actif = true;
-                mouvementJoueur(joueurDeux);
-            }else if(this === joueurDeux){
-                joueurUn.actif = true;
-                mouvementJoueur(joueurUn);
+            adversaire.actif = true;
+            this.afficheInfos();
+            adversaire.afficheInfos();
+            if (this === joueurUn) {
+                carteUne.mouvementJoueur(joueurDeux);
+            } else if (this === joueurDeux) {
+                carteUne.mouvementJoueur(joueurUn);
             }
-        })
+        });
     }
 
     /**
