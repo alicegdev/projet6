@@ -83,11 +83,6 @@ class Joueur {
             adversaire.actif = true;
             this.afficheInfos();
             adversaire.afficheInfos();
-            if (this === joueurUn) {
-                carteUne.mouvementJoueur(joueurDeux);
-            } else if (this === joueurDeux) {
-                carteUne.mouvementJoueur(joueurUn);
-            }
         });
     }
 

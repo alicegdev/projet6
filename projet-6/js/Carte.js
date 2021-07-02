@@ -44,7 +44,6 @@
                   cellule.id += "cellule" + j + i;
 
                   this.cellules.push(new Cellule(('cellule' + j + i), j, i, true));
-                  console.log(this.cellules);
                   colonne.appendChild(cellule);
               }
               tblBody.appendChild(colonne);
@@ -184,10 +183,8 @@
       mouvementJoueur(joueur) {
         if(joueur === joueurUn){
             joueurUn.actif = true;
-            console.log(" Position Edea : cellule " + joueurUn.posX + joueurUn.posY);
         }else{
             joueurDeux.actif = true;
-            console.log("Position Grounch : cellule " + joueurUn.posX + joueurUn.posY);
         }
 
           let casesPossibles = [].concat(
@@ -208,11 +205,6 @@
       }
 
       gestionEvenementsClavier(casesPossibles, joueur, e) {
-          let rightPressed = false;
-          let leftPressed = false;
-          let downPressed = false;
-          let upPressed = false;
-
           let celluleDebutTour = this.cellules.find((cellule) => {
               return (cellule.x === joueur.posX) && (cellule.y === joueur.posY);
           });
@@ -220,7 +212,6 @@
           let celluleFinTour;
 
           if (e.key == "Right" || e.key == "ArrowRight") {
-              rightPressed = true;
               celluleFinTour = this.cellules.find((cellule) => {
                   return (cellule.x === (celluleDebutTour.x) + 1) && (cellule.y === joueur.posY);
               });
@@ -230,11 +221,8 @@
                   });
                   alert("Impossible d'aller plus loin");
               }
-              carteUne.nouvellePosJoueur(casesPossibles, celluleFinTour, joueur);
-
 
           } else if (e.key == "Left" || e.key == "ArrowLeft") {
-              leftPressed = true;
               celluleFinTour = this.cellules.find((cellule) => {
                   return (cellule.x === (celluleDebutTour.x) - 1) && (cellule.y === joueur.posY);
               });
@@ -245,12 +233,8 @@
                   });
                   alert("Impossible d'aller plus loin");
               }
-              carteUne.nouvellePosJoueur(casesPossibles, celluleFinTour, joueur);
-
-
 
           } else if (e.key == "Down" || e.key == "ArrowDown") {
-              downPressed = true;
               celluleFinTour = this.cellules.find((cellule) => {
                   return (cellule.x === joueur.posX) && (cellule.y === (celluleDebutTour.y) + 1);
               });
@@ -261,40 +245,22 @@
                   });
                   alert("Impossible d'aller plus loin");
               }
-              carteUne.nouvellePosJoueur(casesPossibles, celluleFinTour, joueur);
 
           } else if (e.key == "Up" || e.key == "ArrowUp") {
-              upPressed = true;
               celluleFinTour = this.cellules.find((cellule) => {
                   return (cellule.x === joueur.posX) && (cellule.y === (celluleDebutTour.y) - 1);
               });
               if (casesPossibles.includes(celluleFinTour) === false) {
-                  console.log(casesPossibles);
                   celluleFinTour = this.cellules.find((cellule) => {
                       return (cellule.x === joueur.posX) && (cellule.y === joueur.posY); 
                   });
                   alert("Impossible d'aller plus loin");
-                  // gérer l'affichage du joueur dans ce cas-là
               }
-              carteUne.nouvellePosJoueur(casesPossibles, celluleFinTour, joueur);
 
           }
-
-
-          document.addEventListener("keyup", function keyUpHandler(e) {
-              if (e.key == "Right" || e.key == "ArrowRight") {
-                  rightPressed = false;
-              }
-              if (e.key == "Left" || e.key == "ArrowLeft") {
-                  leftPressed = false;
-              }
-              if (e.key == "Down" || e.key == "ArrowDown") {
-                  downPressed = false;
-              } else if (e.key == "Up" || e.key == "ArrowUp") {
-                  upPressed = false;
-              }
-          });
+          carteUne.nouvellePosJoueur(casesPossibles, celluleFinTour, joueur);
       }
+
       nouvellePosJoueur(casesPossibles, celluleFinTour, joueur) {
           
           if (joueur.actif === true) {
