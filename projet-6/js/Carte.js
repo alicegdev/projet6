@@ -213,46 +213,5 @@
         
       } */
 
-      detectionChangementDArme(celluleFinTour, joueur) {
-          this.cellules.forEach(cellule => {
-              if (cellule.id === celluleFinTour.id) {
-                  if (cellule.contientArme !== null) {
-                      let tampon = {
-                          arme: joueur.arme,
-                          idCase: celluleFinTour.id
-                      }
-                      joueur.tmp = tampon;
-                      joueur.arme = cellule.contientArme;
-                      joueur.coteInfos.innerHTML = joueur.informations;
-                      cellule.contientArme = tampon.arme;
-
-                  }
-              }
-
-          });
-      }
-
-      detectionCombat(joueur) {
-          
-          if (joueur === joueurUn) {
-              if (((joueur.posX === joueurDeux.posX) && (joueur.posY === (joueurDeux.posY - 1))) ||
-                  ((joueur.posX === joueurDeux.posX) && (joueur.posY === (joueurDeux.posY + 1))) ||
-                  ((joueur.posX === joueurDeux.posX - 1) && (joueur.posY === (joueurDeux.posY))) ||
-                  ((joueur.posX === joueurDeux.posX + 1) && (joueur.posY === (joueurDeux.posY)))) {
-                  alert("Combat lancé");
-
-                  joueurUn.boutonsCombat(joueurDeux);
-              }
-          } else if (joueur === joueurDeux) {
-              if (((joueur.posX === joueurUn.posX) && (joueur.posY === (joueurUn.posY - 1))) ||
-                  ((joueur.posX === joueurUn.posX) && (joueur.posY === (joueurUn.posY + 1))) ||
-                  ((joueur.posX === joueurUn.posX - 1) && (joueur.posY === (joueurUn.posY))) ||
-                  ((joueur.posX === joueurUn.posX + 1) && (joueur.posY === (joueurUn.posY)))) {
-                  alert("Combat lancé");
-                  joueurDeux.boutonsCombat(joueurUn);
-
-
-              }
-          }
-      }
+      
   }
