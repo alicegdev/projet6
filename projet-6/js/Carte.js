@@ -144,26 +144,7 @@
           } while (k < this.tabJoueurs.length);
       }
       
-      detectionChangementDArme(celluleFinTour, joueur) {
-        if(joueur.actif === true){
-        this.cellules.forEach(cellule => {
-            if (cellule.id === celluleFinTour.id) {
-                if (cellule.contientArme !== null) {
-                    let tampon = {
-                        arme: joueur.arme,
-                        idCase: celluleFinTour.id
-                    }
-                    joueur.tmp = tampon;
-                    joueur.arme = cellule.contientArme;
-                    joueur.afficheInfos();
-                    cellule.contientArme = tampon.arme;
-
-                } 
-            }
-
-        });
-    }
-    }
+      
       
       
       

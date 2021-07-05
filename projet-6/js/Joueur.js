@@ -273,6 +273,26 @@ class Joueur {
           */
         }
       } 
+      detectionChangementDArme(celluleFinTour) {
+          //pbm avec cette fonction
+        carteUne.cellules.forEach(cellule => {
+            if (cellule.id === celluleFinTour.id) {
+                if (cellule.contientArme !== null) {
+                    let tampon = {
+                        arme: this.arme,
+                        idCase: celluleFinTour.id
+                    }
+                    this.tmp = tampon;
+                    this.arme = cellule.contientArme;
+                    this.afficheInfos();
+                    cellule.contientArme = tampon.arme;
+
+                } 
+            }
+
+        });
+    
+    }
 
     nouvellePosJoueur(casesPossibles, celluleFinTour) {
           
@@ -291,7 +311,7 @@ class Joueur {
                 document.getElementById(this.tmp.idCase).style.backgroundImage = "url(" + this.tmp.arme.visuel + ")";
                 this.tmp = null;
             }
-            carteUne.detectionChangementDArme(celluleFinTour, this);
+            this.detectionChangementDArme(celluleFinTour);
             this.moving = false;
             this.stopped = false;
             if(this === joueurUn){
