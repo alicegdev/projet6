@@ -143,40 +143,27 @@
               k++;
           } while (k < this.tabJoueurs.length);
       }
-      /**
-       * trouve les cases sur lesquelles le joueur peut se déplacer
-       * @param{string} axe - l'axe horizontal ou vertical
-       * @param{object} joueur - le joueur qui doit trouver sa prochaine case
-       * @param{direction} direction - possibilité d'aller en arrière ou en avant
-       */
-      caseSuivante(axe, joueur, direction = 1) {
+      
+      detectionChangementDArme(celluleFinTour, joueur) {
+        if(joueur.actif === true){
+        this.cellules.forEach(cellule => {
+            if (cellule.id === celluleFinTour.id) {
+                if (cellule.contientArme !== null) {
+                    let tampon = {
+                        arme: joueur.arme,
+                        idCase: celluleFinTour.id
+                    }
+                    joueur.tmp = tampon;
+                    joueur.arme = cellule.contientArme;
+                    joueur.afficheInfos();
+                    cellule.contientArme = tampon.arme;
 
-          let xPlayer = joueur.posX;
-          let yPlayer = joueur.posY;
+                } 
+            }
 
-          let tabIndex = (direction === 1) ? [1, 2, 3] : [-1, -2, -3];
-          let tabCaseOk = [];
-
-          for (let i of tabIndex) {
-              let x = (axe === "x") ? xPlayer - i : xPlayer;
-              let y = (axe === "y") ? yPlayer - i : yPlayer;
-
-              if ((x < this.colonnes) && (x >= 0) && (y < this.lignes) && (y >= 0)) {
-                  let caseOk = this.cellules.find((cellule) => {
-                      return (cellule.x == x) && (cellule.y == y) && (cellule.accessible === true);
-                  });
-
-                  if (caseOk !== undefined) {
-                      tabCaseOk.push(caseOk);
-                  } else {
-                      break;
-                  }
-              }
-          }
-
-          
-          return tabCaseOk;
-      }
+        });
+    }
+    }
       
       
       

@@ -74,7 +74,43 @@ class Joueur {
         }
     }
 
+    /**
+       * trouve les cases sur lesquelles le joueur peut se déplacer
+       * @param{string} axe - l'axe horizontal ou vertical
+       * @param{object} joueur - le joueur qui doit trouver sa prochaine case
+       * @param{direction} direction - possibilité d'aller en arrière ou en avant
+       */
+     caseSuivante(axe, direction = 1) {
+
+        let xPlayer = this.posX;
+        let yPlayer = this.posY;
+
+        let tabIndex = (direction === 1) ? [1, 2, 3] : [-1, -2, -3];
+        let tabCaseOk = [];
+
+        for (let i of tabIndex) {
+            let x = (axe === "x") ? xPlayer - i : xPlayer;
+            let y = (axe === "y") ? yPlayer - i : yPlayer;
+
+            if ((x < carteUne.colonnes) && (x >= 0) && (y < carteUne.lignes) && (y >= 0)) {
+                let caseOk = carteUne.cellules.find((cellule) => {
+                    return (cellule.x == x) && (cellule.y == y) && (cellule.accessible === true);
+                });
+
+                if (caseOk !== undefined) {
+                    tabCaseOk.push(caseOk);
+                } else {
+                    break;
+                }
+            }
+        }
+
+        
+        return tabCaseOk;
+    }
+
     tourSuivant(adversaire) {
+        if(this.actif === true && this.stopped === false){
             let btnTourSuivant = document.createElement("button");
             btnTourSuivant.className += "game_btn";
             btnTourSuivant.innerHTML = "Tour suivant";
@@ -83,34 +119,17 @@ class Joueur {
             
 
         btnTourSuivant.addEventListener("click", () => {
-            console.log("nom du joueur :" + this.nom + "nom de l'adversaire :" + adversaire.nom);
             this.actif = false;
             this.afficheInfos();
             adversaire.actif = true;
             adversaire.stopped = false;
             adversaire.afficheInfos();
         });
+    }
     
     }
 
-    detectionChangementDArme(celluleFinTour) {
-        carteUne.cellules.forEach(cellule => {
-            if (cellule.id === celluleFinTour.id) {
-                if (cellule.contientArme !== null) {
-                    let tampon = {
-                        arme: this.arme,
-                        idCase: celluleFinTour.id
-                    }
-                    this.tmp = tampon;
-                    this.arme = cellule.contientArme;
-                    this.coteInfos.innerHTML = this.informations;
-                    cellule.contientArme = tampon.arme;
-
-                }
-            }
-
-        });
-    }
+   
 
     detectionCombat(adversaire) {
             if (((this.posX === adversaire.posX) && (this.posY === (adversaire.posY - 1))) ||
@@ -118,7 +137,10 @@ class Joueur {
                 ((this.posX === adversaire.posX - 1) && (this.posY === (adversaire.posY))) ||
                 ((this.posX === adversaire.posX + 1) && (this.posY === (adversaire.posY)))) {
                 alert("Combat lancé");
-
+                this.stopped = true;
+                adversaire.stopped = true;
+                this.afficheInfos();
+                adversaire.afficheInfos();
                 this.boutonsCombat(adversaire);
             }
         
@@ -130,8 +152,7 @@ class Joueur {
      */
 
     boutonsCombat(adversaire) {
-        this.stopped = true;
-        adversaire.stopped = true;
+        
         this.afficheInfos();
         adversaire.afficheInfos();
 
@@ -160,12 +181,13 @@ class Joueur {
        */
      mouvementJoueur() {
         this.actif = true;
+        if(this.actif === true){
         
           let casesPossibles = [].concat(
-              carteUne.caseSuivante("x", this),
-              carteUne.caseSuivante("x", this, -1),
-              carteUne.caseSuivante("y", this),
-              carteUne.caseSuivante("y", this, -1)
+              this.caseSuivante("x"),
+              this.caseSuivante("x", -1),
+              this.caseSuivante("y"),
+              this.caseSuivante("y", -1)
           );
 
           casesPossibles.forEach(cellule => {
@@ -178,7 +200,7 @@ class Joueur {
               console.log("keydown " + this.nom);
             this.gestionEvenementsClavier(casesPossibles, e);
           });
-        
+        }
       }
 
       gestionEvenementsClavier(casesPossibles, e) {
@@ -226,6 +248,7 @@ class Joueur {
           }
 
           document.addEventListener("keyup", () => {
+            
             if(upPressed === true){
                 upPressed = false;
             }else if(downPressed === true){
@@ -235,13 +258,20 @@ class Joueur {
             }else if(leftPressed === true){
                 leftPressed = false;
             }
+            
           });
 
+        
+        if(upPressed === false || downPressed === false || rightPressed === false || leftPressed === false){
+        document.removeEventListener("keydown", (e) => {
+            this.gestionEvenementsClavier(casesPossibles, e);
+          });
         }
           /*document.removeEventListener("keydown", (e) => {
             carteUne.gestionEvenementsClavier(casesPossibles, this, e);
           });
           */
+        }
       } 
 
     nouvellePosJoueur(casesPossibles, celluleFinTour) {
@@ -257,13 +287,13 @@ class Joueur {
             }
             this.posX = celluleFinTour.x;
             this.posY = celluleFinTour.y;
-            this.stopped = false;
-            this.moving = false;
             if (this.tmp !== null) {
                 document.getElementById(this.tmp.idCase).style.backgroundImage = "url(" + this.tmp.arme.visuel + ")";
                 this.tmp = null;
             }
-            this.detectionChangementDArme(celluleFinTour);
+            carteUne.detectionChangementDArme(celluleFinTour, this);
+            this.moving = false;
+            this.stopped = false;
             if(this === joueurUn){
                 this.detectionCombat(joueurDeux);
                 this.tourSuivant(joueurDeux);
@@ -271,6 +301,7 @@ class Joueur {
                 this.detectionCombat(joueurUn);
                 this.tourSuivant(joueurUn);
             }
+
         }
       
     }
@@ -282,7 +313,7 @@ class Joueur {
           });
           this.stopped = true;
           //alert("Impossible d'aller plus loin");
-          console.log("joueur" + this.nom + this.actif + this.moving + this.stopped);
+          console.log("joueur actif" + this.nom + "actif :" + this.actif + "moving :" + this.moving +"stopped :" + this.stopped);
           document.removeEventListener("keydown", (e) => {
             this.gestionEvenementsClavier(casesPossibles, this, e);
           });
