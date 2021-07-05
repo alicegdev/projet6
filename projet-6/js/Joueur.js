@@ -68,27 +68,29 @@ class Joueur {
             this.coteJoueur.appendChild(btnDeplacement);
             this.btnDeplacement = btnDeplacement;
             this.btnDeplacement.addEventListener("click", () => {
-                carteUne.mouvementJoueur(this);
+                this.mouvementJoueur();
             });
             
         }
     }
 
     tourSuivant(adversaire) {
-        let btnTourSuivant = document.createElement("button");
-        if (this.actif === true || this.stopped === true) {
+            let btnTourSuivant = document.createElement("button");
             btnTourSuivant.className += "game_btn";
             btnTourSuivant.innerHTML = "Tour suivant";
             this.coteJoueur.appendChild(btnTourSuivant);
             this.btnTourSuivant = btnTourSuivant;
-        }
+            
+
         btnTourSuivant.addEventListener("click", () => {
+            console.log("nom du joueur :" + this.nom + "nom de l'adversaire :" + adversaire.nom);
             this.actif = false;
+            this.afficheInfos();
             adversaire.actif = true;
             adversaire.stopped = false;
-            this.afficheInfos();
             adversaire.afficheInfos();
         });
+    
     }
 
     /**
@@ -120,6 +122,140 @@ class Joueur {
         }
 
     }
+
+    /**
+       * déplace le joueur, prend arme/lâche arme si le cas se présente, détecte conditions combat
+       * @param{object} joueur - le joueur qui se déplace
+       */
+     mouvementJoueur() {
+        this.actif = true;
+
+          let casesPossibles = [].concat(
+              carteUne.caseSuivante("x", this),
+              carteUne.caseSuivante("x", this, -1),
+              carteUne.caseSuivante("y", this),
+              carteUne.caseSuivante("y", this, -1)
+          );
+
+          casesPossibles.forEach(cellule => {
+              document.getElementById(cellule.id).style.backgroundColor = "#CC5285";
+          });
+          alert("Déplacez-vous au clavier sur l'une des cases en surbrillance pour continuer");
+
+          document.addEventListener("keydown", (e) => {
+              // j'ai deux joueurs au lieu d'un au 2e tour!
+              console.log("keydown " + this.nom);
+            this.gestionEvenementsClavier(casesPossibles, e);
+          });
+      }
+
+      gestionEvenementsClavier(casesPossibles, e) {
+        let rightPressed;
+        let leftPressed;
+        let downPressed;
+        let upPressed; 
+
+          this.moving = true;
+          let celluleDebutTour = carteUne.cellules.find((cellule) => {
+              return (cellule.x === this.posX) && (cellule.y === this.posY);
+          });
+
+          let celluleFinTour;
+          console.log(this.nom +"this before checkIfPlayerIsStopped");
+
+          if (e.key == "Right" || e.key == "ArrowRight") {
+              rightPressed = true;
+              celluleFinTour = carteUne.cellules.find((cellule) => {
+                  return (cellule.x === (celluleDebutTour.x) + 1) && (cellule.y === this.posY);
+              });
+              this.checkIfPlayerIsStopped(casesPossibles, celluleFinTour);
+
+          } else if (e.key == "Left" || e.key == "ArrowLeft") {
+            leftPressed = true;
+              celluleFinTour = carteUne.cellules.find((cellule) => {
+                  return (cellule.x === (celluleDebutTour.x) - 1) && (cellule.y === this.posY);
+              });
+                this.checkIfPlayerIsStopped(casesPossibles, celluleFinTour);
+
+          } else if (e.key == "Down" || e.key == "ArrowDown") {
+            downPressed = true;
+              celluleFinTour = carteUne.cellules.find((cellule) => {
+                  return (cellule.x === this.posX) && (cellule.y === (celluleDebutTour.y) + 1);
+              });
+              this.checkIfPlayerIsStopped(casesPossibles, celluleFinTour);
+
+          } else if (e.key == "Up" || e.key == "ArrowUp") {
+                upPressed = true;
+              celluleFinTour = carteUne.cellules.find((cellule) => {
+                  return (cellule.x === this.posX) && (cellule.y === (celluleDebutTour.y) - 1);
+              });
+              this.checkIfPlayerIsStopped(casesPossibles, celluleFinTour);
+          }    
+
+          document.addEventListener("keyup", (e) => {
+            if(upPressed === true){
+                upPressed = false;
+            }else if(downPressed === true){
+                downPressed=false;
+            }else if(rightPressed === true){
+                rightPressed=false;
+            }else if(leftPressed === true){
+                leftPressed = false;
+            }
+          });
+
+          document.removeEventListener("keydown", (e) => {
+            carteUne.gestionEvenementsClavier(casesPossibles, this, e);
+          });
+      } 
+
+    nouvellePosJoueur(casesPossibles, celluleFinTour) {
+          
+        if (this.actif === true) {
+            casesPossibles.forEach(cellule => {
+                document.getElementById(cellule.id).style.backgroundColor = "#4C2E4D";
+            });
+            let idCelluleFinTour = celluleFinTour.id;
+            document.getElementById(idCelluleFinTour).style.backgroundImage = "url(" + this.visuel + ")";
+            if(this.stopped === false){
+            document.getElementById("cellule" + this.posX + this.posY).style.backgroundImage = "none";
+            }
+            this.posX = celluleFinTour.x;
+            this.posY = celluleFinTour.y;
+            this.stopped = false;
+            this.moving = false;
+            if (this.tmp !== null) {
+                document.getElementById(this.tmp.idCase).style.backgroundImage = "url(" + this.tmp.arme.visuel + ")";
+                this.tmp = null;
+            }
+            carteUne.detectionChangementDArme(celluleFinTour, this);
+            carteUne.detectionCombat(this);
+            if(this === joueurUn){
+                joueurUn.tourSuivant(joueurDeux);
+            }else if(this === joueurDeux){
+                joueurDeux.tourSuivant(joueurUn);
+            }
+        }
+      
+    }
+
+    checkIfPlayerIsStopped(casesPossibles, celluleFinTour){
+        if (casesPossibles.includes(celluleFinTour) === false || this.stopped === true) {
+          celluleFinTour = carteUne.cellules.find((cellule) => {
+              return (cellule.x === this.posX) && (cellule.y === this.posY);
+          });
+          this.stopped = true;
+          alert("Impossible d'aller plus loin");
+          console.log("joueur" + this.nom + this.actif + this.moving + this.stopped);
+          document.removeEventListener("keydown", (e) => {
+            carteUne.gestionEvenementsClavier(casesPossibles, this, e);
+          });
+          }
+        
+          this.afficheInfos();
+          this.nouvellePosJoueur(casesPossibles, celluleFinTour);
+        
+      }
 
     /**
      * attaque l'adversaire et réalise les dégâts définis par l'arme
