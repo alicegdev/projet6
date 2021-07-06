@@ -78,7 +78,7 @@ class Joueur {
        * trouve les cases sur lesquelles le joueur peut se déplacer
        * @param{string} axe - l'axe horizontal ou vertical
        * @param{object} joueur - le joueur qui doit trouver sa prochaine case
-       * @param{direction} direction - possibilité d'aller en arrière ou en avant
+       * @param{number} direction - possibilité d'aller en arrière ou en avant
        */
      caseSuivante(axe, direction = 1) {
 
@@ -144,6 +144,11 @@ class Joueur {
           }});
         }
     }
+    /**
+     * 
+     * @param {array} casesPossibles - cellules sur lesquelles le joueur peut se déplacer
+     * @param {event} e - événement touche pressée
+     */
 
     gestionEvenementsClavier(casesPossibles, e) {
         if(this.actif === true){
@@ -191,6 +196,11 @@ class Joueur {
               });
         }
       } 
+      /**
+       * Vérifie si le joueur ne peut plus se déplacer. Si non, lance la suite du mouvement.
+       * @param {array} casesPossibles - les cases sur lesquelles le joueur peut se déplacer
+       * @param {object} celluleFinTour - la cellule sur laquelle le joueur se déplace ou est à la fin de son tour
+       */
 
       checkIfPlayerIsStopped(casesPossibles, celluleFinTour){
         if (this.actif === true && (casesPossibles.includes(celluleFinTour) === false || this.stopped === true)) {
@@ -209,6 +219,12 @@ class Joueur {
         
         
       }
+      /**
+       * enlève la surbrillance des cases, place le visuel du joueur, change la position du joueur et dépose l'arme
+       * tampon
+       * @param {array} casesPossibles - les cases sur lesquelles le joueur peut se déplacer
+       * @param {object} celluleFinTour - la cellule sur laquelle le joueur se déplace ou est à la fin de son tour
+       */
 
       nouvellePosJoueur(casesPossibles, celluleFinTour) {
           
@@ -249,6 +265,10 @@ class Joueur {
         }
       
     }
+    /**
+     * Détecte si une arme est sur la case. Si oui, la met dans un tampon et change l'arme du joueur.
+     * @param {object} celluleFinTour - la cellule sur laquelle le joueur atterrit à la fin du tour.
+     */
 
     detectionChangementDArme(celluleFinTour) {
     if(this.stopped === false){
@@ -272,6 +292,11 @@ class Joueur {
   
   }
 
+  /**
+   * Détecte si les conditions du combat sont réunies, stoppe les joueurs et affiche les boutons Combat.
+   * @param {object} adversaire 
+   */
+
   detectionCombat(adversaire) {
     if (((this.posX === adversaire.posX) && (this.posY === (adversaire.posY - 1))) ||
         ((this.posX === adversaire.posX) && (this.posY === (adversaire.posY + 1))) ||
@@ -286,7 +311,10 @@ class Joueur {
     }
 
 }
-
+/**
+ * Affiche un bouton qui permet de passer au tour de l'autre joueur
+ * @param {object} adversaire -le joueur adverse 
+ */
     tourSuivant(adversaire) {
         if(this.actif === true && this.stopped === false){
             let btnTourSuivant = document.createElement("button");
