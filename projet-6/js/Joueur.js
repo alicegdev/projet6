@@ -109,72 +109,6 @@ class Joueur {
         return tabCaseOk;
     }
 
-    tourSuivant(adversaire) {
-        if(this.actif === true && this.stopped === false){
-            let btnTourSuivant = document.createElement("button");
-            btnTourSuivant.className += "game_btn";
-            btnTourSuivant.innerHTML = "Tour suivant";
-            this.coteJoueur.appendChild(btnTourSuivant);
-            this.btnTourSuivant = btnTourSuivant;
-            
-
-        btnTourSuivant.addEventListener("click", () => {
-            this.actif = false;
-            this.afficheInfos();
-            adversaire.actif = true;
-            adversaire.stopped = false;
-            adversaire.afficheInfos();
-        });
-    }
-    
-    }
-
-   
-
-    detectionCombat(adversaire) {
-            if (((this.posX === adversaire.posX) && (this.posY === (adversaire.posY - 1))) ||
-                ((this.posX === adversaire.posX) && (this.posY === (adversaire.posY + 1))) ||
-                ((this.posX === adversaire.posX - 1) && (this.posY === (adversaire.posY))) ||
-                ((this.posX === adversaire.posX + 1) && (this.posY === (adversaire.posY)))) {
-                alert("Combat lancé");
-                this.stopped = true;
-                adversaire.stopped = true;
-                this.afficheInfos();
-                adversaire.afficheInfos();
-                this.boutonsCombat(adversaire);
-            }
-        
-    }
-
-    /**
-     * Affiche les boutons du combat dans l'encadré de chaque joueur
-     * @param{object} adversaire - le joueur adverse
-     */
-
-    boutonsCombat(adversaire) {
-        
-        this.afficheInfos();
-        adversaire.afficheInfos();
-
-        if (this.actif === true) {
-            let btnAttaquer = document.createElement("button");
-            btnAttaquer.className += "game_btn";
-            this.coteJoueur.appendChild(btnAttaquer);
-            btnAttaquer.innerHTML = "Attaquer";
-            let btnSeDefendre = document.createElement("button");
-            btnSeDefendre.className += "game_btn";
-            this.coteJoueur.appendChild(btnSeDefendre);
-            btnSeDefendre.innerHTML = "Se défendre";
-            btnAttaquer.addEventListener("click", () => {
-                this.attaquer(adversaire);
-            });
-            btnSeDefendre.addEventListener("click", () => {
-                this.seDefendre(adversaire);
-            });
-        }
-
-    }
-
     /**
        * déplace le joueur, prend arme/lâche arme si le cas se présente, détecte conditions combat
        * @param{object} joueur - le joueur qui se déplace
@@ -201,9 +135,9 @@ class Joueur {
             this.gestionEvenementsClavier(casesPossibles, e);
           });
         }
-      }
+    }
 
-      gestionEvenementsClavier(casesPossibles, e) {
+    gestionEvenementsClavier(casesPossibles, e) {
         if(this.actif === true){
         let rightPressed = false;
         let leftPressed = false;
@@ -258,43 +192,40 @@ class Joueur {
             }else if(leftPressed === true){
                 leftPressed = false;
             }
+            document.removeEventListener("keydown", (e) => {
+                this.gestionEvenementsClavier(casesPossibles, e);
+              });
             
           });
 
         
-        if(upPressed === false || downPressed === false || rightPressed === false || leftPressed === false){
-        document.removeEventListener("keydown", (e) => {
-            this.gestionEvenementsClavier(casesPossibles, e);
-          });
-        }
-          /*document.removeEventListener("keydown", (e) => {
-            carteUne.gestionEvenementsClavier(casesPossibles, this, e);
-          });
-          */
+       
+      
+        
+          
         }
       } 
-      detectionChangementDArme(celluleFinTour) {
-          //pbm avec cette fonction
-        carteUne.cellules.forEach(cellule => {
-            if (cellule.id === celluleFinTour.id) {
-                if (cellule.contientArme !== null) {
-                    let tampon = {
-                        arme: this.arme,
-                        idCase: celluleFinTour.id
-                    }
-                    this.tmp = tampon;
-                    this.arme = cellule.contientArme;
-                    this.afficheInfos();
-                    cellule.contientArme = tampon.arme;
 
-                } 
-            }
+      checkIfPlayerIsStopped(casesPossibles, celluleFinTour){
+        if (this.actif === true && (casesPossibles.includes(celluleFinTour) === false || this.stopped === true)) {
+          celluleFinTour = carteUne.cellules.find((cellule) => {
+              return (cellule.x === this.posX) && (cellule.y === this.posY);
+          });
+          this.stopped = true;
+          //alert("Impossible d'aller plus loin");
+          console.log("joueur actif" + this.nom + "actif :" + this.actif + "moving :" + this.moving +"stopped :" + this.stopped);
+          document.removeEventListener("keydown", (e) => {
+            this.gestionEvenementsClavier(casesPossibles, this, e);
+          });
+        }
+        
+          this.afficheInfos();
+          this.nouvellePosJoueur(casesPossibles, celluleFinTour);
+        
+        
+      }
 
-        });
-    
-    }
-
-    nouvellePosJoueur(casesPossibles, celluleFinTour) {
+      nouvellePosJoueur(casesPossibles, celluleFinTour) {
           
         if (this.actif === true) {
             casesPossibles.forEach(cellule => {
@@ -326,24 +257,100 @@ class Joueur {
       
     }
 
-    checkIfPlayerIsStopped(casesPossibles, celluleFinTour){
-        if (this.actif === true && (casesPossibles.includes(celluleFinTour) === false || this.stopped === true)) {
-          celluleFinTour = carteUne.cellules.find((cellule) => {
-              return (cellule.x === this.posX) && (cellule.y === this.posY);
-          });
-          this.stopped = true;
-          //alert("Impossible d'aller plus loin");
-          console.log("joueur actif" + this.nom + "actif :" + this.actif + "moving :" + this.moving +"stopped :" + this.stopped);
-          document.removeEventListener("keydown", (e) => {
-            this.gestionEvenementsClavier(casesPossibles, this, e);
-          });
+    detectionChangementDArme(celluleFinTour) {
+        //pbm avec cette fonction
+      carteUne.cellules.forEach(cellule => {
+          if (cellule.id === celluleFinTour.id) {
+              if (cellule.contientArme !== null) {
+                  let tampon = {
+                      arme: this.arme,
+                      idCase: celluleFinTour.id
+                  }
+                  this.tmp = tampon;
+                  this.arme = cellule.contientArme;
+                  this.afficheInfos();
+                  cellule.contientArme = tampon.arme;
+
+              } 
+          }
+
+      });
+  
+  }
+
+  detectionCombat(adversaire) {
+    if (((this.posX === adversaire.posX) && (this.posY === (adversaire.posY - 1))) ||
+        ((this.posX === adversaire.posX) && (this.posY === (adversaire.posY + 1))) ||
+        ((this.posX === adversaire.posX - 1) && (this.posY === (adversaire.posY))) ||
+        ((this.posX === adversaire.posX + 1) && (this.posY === (adversaire.posY)))) {
+        alert("Combat lancé");
+        this.stopped = true;
+        adversaire.stopped = true;
+        this.afficheInfos();
+        adversaire.afficheInfos();
+        this.boutonsCombat(adversaire);
+    }
+
+}
+
+    tourSuivant(adversaire) {
+        if(this.actif === true && this.stopped === false){
+            let btnTourSuivant = document.createElement("button");
+            btnTourSuivant.className += "game_btn";
+            btnTourSuivant.innerHTML = "Tour suivant";
+            this.coteJoueur.appendChild(btnTourSuivant);
+            this.btnTourSuivant = btnTourSuivant;
+            
+
+        btnTourSuivant.addEventListener("click", () => {
+            this.actif = false;
+            this.afficheInfos();
+            adversaire.actif = true;
+            adversaire.stopped = false;
+            adversaire.afficheInfos();
+        });
+    }
+    
+    }
+
+   
+
+    /**
+     * Affiche les boutons du combat dans l'encadré de chaque joueur
+     * @param{object} adversaire - le joueur adverse
+     */
+
+    boutonsCombat(adversaire) {
+        
+        this.afficheInfos();
+        adversaire.afficheInfos();
+
+        if (this.actif === true) {
+            let btnAttaquer = document.createElement("button");
+            btnAttaquer.className += "game_btn";
+            this.coteJoueur.appendChild(btnAttaquer);
+            btnAttaquer.innerHTML = "Attaquer";
+            let btnSeDefendre = document.createElement("button");
+            btnSeDefendre.className += "game_btn";
+            this.coteJoueur.appendChild(btnSeDefendre);
+            btnSeDefendre.innerHTML = "Se défendre";
+            btnAttaquer.addEventListener("click", () => {
+                this.attaquer(adversaire);
+            });
+            btnSeDefendre.addEventListener("click", () => {
+                this.seDefendre(adversaire);
+            });
         }
-        
-          this.afficheInfos();
-          this.nouvellePosJoueur(casesPossibles, celluleFinTour);
-        
-        
+
+    
       }
+
+      
+      
+
+    
+
+    
 
     /**
      * attaque l'adversaire et réalise les dégâts définis par l'arme

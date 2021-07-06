@@ -148,38 +148,7 @@
       
       
       
-    /*
-      nouvellePosJoueur(casesPossibles, celluleFinTour, joueur) {
-          
-          if (joueur.actif === true) {
-              casesPossibles.forEach(cellule => {
-                  document.getElementById(cellule.id).style.backgroundColor = "#4C2E4D";
-              });
-              let idCelluleFinTour = celluleFinTour.id;
-              document.getElementById(idCelluleFinTour).style.backgroundImage = "url(" + joueur.visuel + ")";
-              if(joueur.stopped === false){
-              document.getElementById("cellule" + joueur.posX + joueur.posY).style.backgroundImage = "none";
-              }
-              joueur.posX = celluleFinTour.x;
-              joueur.posY = celluleFinTour.y;
-              console.log("joueur position = cellule " + joueur.posX + joueur.posY);
-              joueur.stopped = false;
-              joueur.moving = false;
-              if (joueur.tmp !== null) {
-                  document.getElementById(joueur.tmp.idCase).style.backgroundImage = "url(" + joueur.tmp.arme.visuel + ")";
-                  joueur.tmp = null;
-              }
-              this.detectionChangementDArme(celluleFinTour, joueur);
-              this.detectionCombat(joueur);
-              if(joueur === joueurUn){
-                  joueurUn.tourSuivant(joueurDeux);
-              }else{
-                  joueurDeux.tourSuivant(joueurUn);
-              }
-          }
-          
-        
-      } */
+   
 
       
   }
