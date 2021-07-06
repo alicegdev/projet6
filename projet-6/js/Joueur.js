@@ -385,6 +385,7 @@ class Joueur {
         }
         adversaire.afficheInfos();
         if (adversaire.sante <= 0) {
+            adversaire.sante = 0;
             this.gameOver(adversaire);
         }
         this.actif = false;
