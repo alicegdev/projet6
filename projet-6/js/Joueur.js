@@ -11,7 +11,7 @@
  * @param {number} posY- la position en y de la case sur laquelle est le joueur
  * @param {object} tmp - contient l'arme détenue par le joueur avant d'en changer
  * @param {boolean} actif - "true" si c'est au tour du joueur en question
- * @param {boolean} stopped -
+ * @param {boolean} stopped - "true" si le joueur arrive au bout du tableau ou de son compte de mouvements autorisés
  * @param {boolean} choixDefense - "true" si le joueur a fait le choix de se défendre
  */
 
@@ -186,18 +186,9 @@ class Joueur {
 
           }    
 
-          
             document.removeEventListener("keydown", (e) => {
                 this.gestionEvenementsClavier(casesPossibles, e);
               });
-            
-          
-
-        
-       
-      
-        
-          
         }
       } 
 
@@ -207,7 +198,6 @@ class Joueur {
               return (cellule.x === this.posX) && (cellule.y === this.posY);
           });
           this.stopped = true;
-          //alert("Impossible d'aller plus loin");
           console.log("joueur actif" + this.nom + "actif :" + this.actif + "moving :" + this.moving +"stopped :" + this.stopped);
           document.removeEventListener("keydown", (e) => {
             this.gestionEvenementsClavier(casesPossibles, this, e);
