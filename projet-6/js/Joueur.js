@@ -130,6 +130,7 @@ class Joueur {
           alert("Déplacez-vous au clavier sur l'une des cases en surbrillance pour continuer");
 
           let moveCount = 0;
+          console.log(this);
 
           document.addEventListener("keydown", (e) => {
               moveCount++;
@@ -236,14 +237,18 @@ class Joueur {
                 document.getElementById(this.tmp.idCase).style.backgroundImage = "url(" + this.tmp.arme.visuel + ")";
                 this.tmp = null;
             }
-            this.detectionChangementDArme(celluleFinTour);
-            this.moving = false;
-            this.stopped = false;
+           
             if(this === joueurUn){
                 console.log(joueurUn, joueurDeux);
+                this.detectionChangementDArme(celluleFinTour);
+                this.moving = false;
+                this.stopped = false;
                 this.detectionCombat(joueurDeux);
                 this.tourSuivant(joueurDeux);
             } else {
+                this.detectionChangementDArme(celluleFinTour);
+                this.moving = false;
+                this.stopped = false;
                 this.detectionCombat(joueurUn);
                 this.tourSuivant(joueurUn);
             }
