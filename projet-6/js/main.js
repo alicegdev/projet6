@@ -17,11 +17,3 @@ let tabJoueurs = [joueurUn, joueurDeux];
 /** création de la carte qui comprend : nombre de lignes, nombre de colonnes, nombre de cellules Inaccessibles, tableau des armes, tableau des joueurs */
 let carteUne = new Carte(4, 6, 3, tabJoueurs, tabArmes);
 
-/** récupération du bouton HTML et transformation en variable JS */
-let btnGenerer = document.getElementById("btn_generer");
-    
-/**  gestionnaire d'événement : au clic, la carte se génère */
-// à passer dans une classe 
-btnGenerer.addEventListener("click", () => {
-    carteUne.generer();
-});

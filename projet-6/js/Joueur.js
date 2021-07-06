@@ -139,10 +139,7 @@ class Joueur {
 
     gestionEvenementsClavier(casesPossibles, e) {
         if(this.actif === true){
-        let rightPressed = false;
-        let leftPressed = false;
-        let downPressed = false;
-        let upPressed = false; 
+        
 
           this.moving = true;
           let celluleDebutTour = carteUne.cellules.find((cellule) => {
@@ -153,50 +150,40 @@ class Joueur {
           console.log(this.nom +"this before checkIfPlayerIsStopped");
 
           if (e.key == "Right" || e.key == "ArrowRight") {
-              rightPressed = true;
               celluleFinTour = carteUne.cellules.find((cellule) => {
                   return (cellule.x === (celluleDebutTour.x) + 1) && (cellule.y === this.posY);
               });
+              this.checkIfPlayerIsStopped(casesPossibles, celluleFinTour);
+
 
           } else if (e.key == "Left" || e.key == "ArrowLeft") {
-            leftPressed = true;
               celluleFinTour = carteUne.cellules.find((cellule) => {
                   return (cellule.x === (celluleDebutTour.x) - 1) && (cellule.y === this.posY);
               });
+              this.checkIfPlayerIsStopped(casesPossibles, celluleFinTour);
+
 
           } else if (e.key == "Down" || e.key == "ArrowDown") {
-            downPressed = true;
               celluleFinTour = carteUne.cellules.find((cellule) => {
                   return (cellule.x === this.posX) && (cellule.y === (celluleDebutTour.y) + 1);
               });
+              this.checkIfPlayerIsStopped(casesPossibles, celluleFinTour);
+
 
           } else if (e.key == "Up" || e.key == "ArrowUp") {
-                upPressed = true;
               celluleFinTour = carteUne.cellules.find((cellule) => {
                   return (cellule.x === this.posX) && (cellule.y === (celluleDebutTour.y) - 1);
               });
+              this.checkIfPlayerIsStopped(casesPossibles, celluleFinTour);
+
           }    
 
-          if(upPressed  === true || downPressed === true || rightPressed === true || leftPressed === true){
-            this.checkIfPlayerIsStopped(casesPossibles, celluleFinTour);
-          }
-
-          document.addEventListener("keyup", () => {
-            
-            if(upPressed === true){
-                upPressed = false;
-            }else if(downPressed === true){
-                downPressed=false;
-            }else if(rightPressed === true){
-                rightPressed=false;
-            }else if(leftPressed === true){
-                leftPressed = false;
-            }
+          
             document.removeEventListener("keydown", (e) => {
                 this.gestionEvenementsClavier(casesPossibles, e);
               });
             
-          });
+          
 
         
        
@@ -246,9 +233,10 @@ class Joueur {
             this.moving = false;
             this.stopped = false;
             if(this === joueurUn){
+                console.log(joueurUn, joueurDeux);
                 this.detectionCombat(joueurDeux);
                 this.tourSuivant(joueurDeux);
-            }else if(this === joueurDeux){
+            } else {
                 this.detectionCombat(joueurUn);
                 this.tourSuivant(joueurUn);
             }
@@ -308,6 +296,7 @@ class Joueur {
             adversaire.actif = true;
             adversaire.stopped = false;
             adversaire.afficheInfos();
+            console.log("tour suivant : this "+ this.nom + " " + this.actif + " adversaire " + adversaire.nom + " " + adversaire.actif );
         });
     }
     

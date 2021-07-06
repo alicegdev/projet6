@@ -1,3 +1,5 @@
+/** récupération du bouton HTML et transformation en variable JS */
+
   /**
    * Représente la carte de jeu et ses attributs.
    * @constructor
@@ -17,6 +19,10 @@
           this.cellules = [];
           this.tabJoueurs = tabJoueurs;
           this.tabArmes = tabArmes;
+          let btnGenerer = document.getElementById("btn_generer");
+          btnGenerer.addEventListener("click", () => {
+              this.generer();
+          });
       }
 
       /**
