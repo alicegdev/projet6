@@ -261,8 +261,7 @@ class Joueur {
     }
 
     detectionChangementDArme(celluleFinTour) {
-        //pbm avec cette fonction
-        if(this.stopped === false){
+    if(this.stopped === false){
       carteUne.cellules.forEach(cellule => {
           if (cellule.id === celluleFinTour.id) {
               if (cellule.contientArme !== null) {
