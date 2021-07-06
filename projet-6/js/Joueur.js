@@ -340,10 +340,6 @@ class Joueur {
     
       }
 
-      
-      
-
-    
 
     
 
@@ -388,15 +384,15 @@ class Joueur {
 
     gameOver(adversaire) {
         let gameOver = document.getElementById("game_over");
-        document.getElementById("game").style.display = "none";
+        $("#game").fadeOut();
+        setTimeout(() => {
         gameOver.style.display = "block";
         gameOver.innerHTML = this.nom + " wins. " + adversaire.nom + " looses. <br />";
         let btnRestart = document.createElement("button");
         btnRestart.className += "outro_btn";
-        game.appendChild(btnRestart);
         btnRestart.innerHTML = "<a href='index.html'>RESTART ?</a>";
         gameOver.appendChild(btnRestart);
-
+        }, 1000);
     }
 
 }
