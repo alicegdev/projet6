@@ -129,11 +129,18 @@ class Joueur {
           });
           alert("Déplacez-vous au clavier sur l'une des cases en surbrillance pour continuer");
 
+          let moveCount = 0;
+
           document.addEventListener("keydown", (e) => {
+              moveCount++;
               // j'ai deux joueurs au lieu d'un au 2e tour!
-              console.log("keydown " + this.nom);
-            this.gestionEvenementsClavier(casesPossibles, e);
-          });
+              if(moveCount < 4){
+                  if(joueurUn.actif === true){
+                    joueurUn.gestionEvenementsClavier(casesPossibles, e);
+              }else{
+                  joueurDeux.gestionEvenementsClavier(casesPossibles, e);
+              }
+          }});
         }
     }
 
