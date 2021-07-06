@@ -236,6 +236,9 @@ class Joueur {
             if (this.tmp !== null) {
                 document.getElementById(this.tmp.idCase).style.backgroundImage = "url(" + this.tmp.arme.visuel + ")";
                 this.tmp = null;
+                if(this.stopped === true){
+                    document.getElementById("cellule" + this.posX + this.posY).style.backgroundImage = "url(" + this.visuel + ")";
+                }
             }
            
             if(this === joueurUn){
@@ -259,6 +262,7 @@ class Joueur {
 
     detectionChangementDArme(celluleFinTour) {
         //pbm avec cette fonction
+        if(this.stopped === false){
       carteUne.cellules.forEach(cellule => {
           if (cellule.id === celluleFinTour.id) {
               if (cellule.contientArme !== null) {
@@ -275,6 +279,7 @@ class Joueur {
           }
 
       });
+    }
   
   }
 
