@@ -12,6 +12,7 @@
  * @param {object} tmp - contient l'arme détenue par le joueur avant d'en changer
  * @param {boolean} actif - "true" si c'est au tour du joueur en question
  * @param {boolean} stopped - "true" si le joueur arrive au bout du tableau ou de son compte de mouvements autorisés
+ * @param {boolean} moving - "true" si le joueur est en train de bouger ou peut continuer à le faire
  * @param {boolean} choixDefense - "true" si le joueur a fait le choix de se défendre
  */
 
